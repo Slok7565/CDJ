@@ -8,6 +8,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Serilog;
 using System.Text.RegularExpressions;
+using System.IO.Compression;
 
 namespace CDJ;
 
@@ -35,14 +36,37 @@ public static class Program
     {
         try
         {
-            var hostBuilder = Host.CreateDefaultBuilder(args).UseContentRoot(Directory.GetCurrentDirectory());
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("config.json")
-                .Build();
+            var hostBuilder = Host.CreateDefaultBuilder(args)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.ConfigureServices(services =>
+                    {
+                        services.AddControllers();
+                        services.AddEndpointsApiExplorer();
+                    });
 
-            hostBuilder
-                .ConfigureAppConfiguration(builder => builder.AddConfiguration(config))
+                    webBuilder.Configure((context, app) =>
+                    {
+                        if (context.HostingEnvironment.IsDevelopment())
+                        {
+                            app.UseDeveloperExceptionPage();
+                        }
+
+                        app.UseRouting();
+
+                        app.UseEndpoints(endpoints =>
+                        {
+                            endpoints.MapControllers();
+                            endpoints.MapGet("/api/user", ISAuthService.HandleGetUserRequest);
+                        });
+                    });
+                })
+                .ConfigureAppConfiguration((context, builder) =>
+                {
+                    builder.SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("config.json");
+                })
                 .ConfigureServices((context, collection) =>
                 {
                     collection.AddHostedService<CDJService>();
@@ -54,16 +78,15 @@ public static class Program
                     collection.AddSingleton<ActiveService>();
                     collection.AddScoped<HttpClient>();
                     collection.AddScoped<DiscordSocketClient>();
-                    collection.Configure<ServerConfig>(config);
+                    collection.Configure<ServerConfig>(context.Configuration);
                 })
                 .UseSerilog();
 
-            return hostBuilder; 
+            return hostBuilder;
         }
         catch (Exception e)
         {
             Log.Logger.Error($"Run Error: \n {e}");
-          
             throw;
         }
     }
@@ -131,6 +154,126 @@ public class CDJService
         await discordBotService.Stop();
         await eacService.Stop();
         await activeService.StopAsync();
+    }
+}
+public class ISAuthService
+{
+    public static async Task HandleGetUserRequest(HttpContext context)
+    {
+        if (!context.Request.Headers.TryGetValue("Authorization", out var authHeader))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Unauthorized");
+            return;
+        }
+
+        var bearerToken = authHeader.ToString().Replace("Bearer ", "");
+
+        (int authStatus, string friendcode) = await AuthWithIS(bearerToken);
+
+        if (authStatus != StatusCodes.Status200OK)
+        {
+            context.Response.StatusCode = authStatus;
+            await context.Response.WriteAsync(authStatus + " Unauthorized");
+        }
+
+        var query = context.Request.Query;
+        var username = query["username"].ToString();
+        var puid = query["puid"].ToString();
+
+        Log.Logger.Information($"Bearer Token: {bearerToken}, Username: {username}, PUID: {puid}");
+
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        await context.Response.WriteAsync("");
+    }
+
+    public static async Task<(int status, string friendcode)> AuthWithIS(string bearerToken)
+    {
+        try
+        {
+            // Create a new HttpClient
+            using (var client = new HttpClient())
+            {
+                // Create a new HttpRequestMessage
+                var request = new HttpRequestMessage();
+
+                // Set the method to GET
+                request.Method = HttpMethod.Get;
+
+                // Set the URL
+                var url = "https://backend.innersloth.com/api/user/username";
+                request.RequestUri = new Uri(url);
+
+                // Set the headers
+                request.Headers.Add("Accept", "application/vnd.api+json");
+                request.Headers.Add("Accept-Encoding", "deflate, gzip");
+                request.Headers.Add("User-Agent", "UnityPlayer/2020.3.45f1 (UnityWebRequest/1.0, libcurl/7.84.0-DEV)");
+                request.Headers.Add("X-Unity-Version", "2020.3.45f1");
+                request.Headers.Add("Authorization", "Bearer " + bearerToken);
+
+                // Send the request
+                var response = await client.SendAsync(request);
+
+                // Check the response status code
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return (StatusCodes.Status401Unauthorized, string.Empty);
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return (StatusCodes.Status200OK, string.Empty);
+                }
+                else if (response.IsSuccessStatusCode)
+                {
+                    var contentStream = await response.Content.ReadAsStreamAsync();
+                    Stream decompressedStream;
+
+                    if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+                    {
+                        decompressedStream = new GZipStream(contentStream, CompressionMode.Decompress);
+                    }
+                    else if (response.Content.Headers.ContentEncoding.Contains("deflate"))
+                    {
+                        decompressedStream = new DeflateStream(contentStream, CompressionMode.Decompress);
+                    }
+                    else
+                    {
+                        decompressedStream = contentStream;
+                    }
+
+                    using (var reader = new StreamReader(decompressedStream))
+                    {
+                        var content = await reader.ReadToEndAsync();
+                        var jsonDocument = JsonDocument.Parse(content);
+                        var root = jsonDocument.RootElement;
+
+                        if (root.TryGetProperty("data", out var dataProperty) &&
+                            dataProperty.TryGetProperty("attributes", out var attributesProperty))
+                        {
+                            var username = attributesProperty.GetProperty("username").GetString();
+                            var discriminator = attributesProperty.GetProperty("discriminator").GetString();
+                            var friendcode = $"{username}#{discriminator}";
+
+                            return (StatusCodes.Status200OK, friendcode);
+                        }
+
+                        throw new Exception("Could not extract friendcode from response content.");
+                    }
+                }
+                else
+                {
+                    return (StatusCodes.Status401Unauthorized, string.Empty);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log the error (Assuming _logger is accessible, otherwise, you can handle logging accordingly)
+            Log.Logger.Error(ex.ToString() + " at IS auth");
+
+            // Catch any other exceptions
+            return (StatusCodes.Status401Unauthorized, string.Empty);
+        }
     }
 }
 
