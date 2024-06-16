@@ -1,6 +1,10 @@
 name: AutoBuild .NET
 
-on: [push, pull_request]
+on: 
+  [push, pull_request]:
+    paths:
+      - 'TONEX_CHAN/**'
+      - 'TestTONEX_CHAN/**'
 
 jobs:
   BuildLiunx:
@@ -17,16 +21,16 @@ jobs:
           dotnet-version: 8.x
 
       - name: Build
-        run: dotnet build CDJ.csproj --configuration Release --output ./Release
+        run: dotnet build TONEX_CHAN/TONEX_CHAN.csproj --configuration Release --output ./TONEX_CHAN/Release
         
       - name: Del
-        run: rm -rf ./Release/CDJ.pdb ./Release/CDJ.deps.json ./Release/CDJ.runtimeconfig.json ./Release/global.json
+        run: rm -rf ./TONEX_CHAN/Release//TONEX_CHAN.pdb ./TONEX_CHAN/Release//TONEX_CHAN.deps.json ./TONEX_CHAN/Release//TONEX_CHAN.runtimeconfig.json ./TONEX_CHAN/Release//global.json
 
       - name: Upload
         uses: actions/upload-artifact@v4.3.1
         with:
-          name: CDJ-Linux
-          path: ./Release/
+          name: TONEX_CHAN-Linux
+          path: ./TONEX_CHAN/Release/
           
   BuildWindows:
     runs-on: windows-latest
@@ -42,40 +46,40 @@ jobs:
           dotnet-version: 8.x
 
       - name: Build
-        run: dotnet build CDJ.csproj --configuration Release --output ./Release
+        run: dotnet build TONEX_CHAN/TONEX_CHAN.csproj --configuration Release --output ./TONEX_CHAN/Release
         
       - name: Del pdb
-        run: del ./Release/CDJ.pdb
+        run: del ./TONEX_CHAN/Release/TONEX_CHAN.pdb
       
       - name: Del deps
-        run: del ./Release/CDJ.deps.json
+        run: del ./TONEX_CHAN/Release/TONEX_CHAN.deps.json
         
       - name: Del runtimeconfig
-        run: del ./Release/CDJ.runtimeconfig.json
+        run: del ./TONEX_CHAN/Release/TONEX_CHAN.runtimeconfig.json
       
       - name: Del global
-        run: del ./Release/global.json
+        run: del ./TONEX_CHAN/Release/global.json
         
       - name: Upload
         uses: actions/upload-artifact@v4.3.1
         with:
-          name: CDJ-Windows
-          path: ./Release/
+          name: TONEX_CHAN-Windows
+          path: ./TONEX_CHAN/Release/
       
-      - name: BuildTestCDJ
-        run: dotnet build TestCDJ/TestCDJ.csproj --configuration Release --output ./TestCDJ/Release
+      - name: BuildTestTONEX_CHAN
+        run: dotnet build TestTONEX_CHAN/TestTONEX_CHAN.csproj --configuration Release --output TestTONEX_CHAN/Release
         
       - name: Del pdb
-        run: del ./TestCDJ/Release/CDJ.pdb
+        run: del ./TestTONEX_CHAN/Release/TONEX_CHAN.pdb
 
       - name: Del deps
-        run: del ./TestCDJ/Release/CDJ.deps.json
+        run: del ./TestTONEX_CHAN/Release/TONEX_CHAN.deps.json
 
       - name: Del runtimeconfig
-        run: del ./TestCDJ/Release/CDJ.runtimeconfig.json
+        run: del ./TestTONEX_CHAN/Release/TONEX_CHAN.runtimeconfig.json
 
-      - name: Upload TestCDJ
+      - name: Upload TestTONEX_CHAN
         uses: actions/upload-artifact@v4.3.1
         with:
-          name: TestCDJ
-          path: ./TestCDJ/Release
+          name: TestTONEX_CHAN
+          path: ./TestTONEX_CHAN/Release
