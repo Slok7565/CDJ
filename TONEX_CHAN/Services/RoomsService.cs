@@ -138,22 +138,23 @@ public class RoomsService(EnvironmentalTextService service, IOptions<ServerConfi
 
     public static readonly Dictionary<LangName, string> lang_forZh = new()
     {
-        { LangName.English, "英语" },
-    { LangName.Latam, "拉丁美洲" },
-    { LangName.Brazilian, "巴西" },
-    { LangName.Portuguese, "葡萄牙" },
-    { LangName.Korean, "韩语" },
-    { LangName.Russian, "俄语" },
-    { LangName.Dutch, "荷兰语" },
-    { LangName.Filipino, "菲律宾语" },
-    { LangName.French, "法语" },
-    { LangName.German, "德语" },
-    { LangName.Italian, "意大利语" },
-    { LangName.Japanese, "日语" },
-    { LangName.Spanish, "西班牙语" },
-    { LangName.SChinese, "简体中文" },
-    { LangName.TChinese, "繁体中文" },
-    { LangName.Irish, "爱尔兰语" }
+{ LangName.English, "English" },
+{ LangName.Latam, "Latinoamérica" },
+{ LangName.Brazilian, "Brasil" },
+{ LangName.Portuguese, "Português" },
+{ LangName.Korean, "한국어" },
+{ LangName.Russian, "Русский" },
+{ LangName.Dutch, "Nederlands" },
+{ LangName.Filipino, "Filipino" },
+{ LangName.French, "Français" },
+{ LangName.German, "Deutsch" },
+{ LangName.Italian, "Italiano" },
+{ LangName.Japanese, "日本語" },
+{ LangName.Spanish, "Español" },
+{ LangName.SChinese, "简体中文" },
+{ LangName.TChinese, "繁體中文" },
+{ LangName.Irish, "Gaeilge" }
+
     };
     public static readonly Dictionary<LangName, string> lang_forEn = new()
     {
