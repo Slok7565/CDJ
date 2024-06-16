@@ -11,7 +11,7 @@ public static class Program
     public static readonly Version version = new(1, 0, 1);
     
     public static void Main(string[] args)
-    {
+    { 
         var config = CreateConfig();
         SetLog(config);
         
