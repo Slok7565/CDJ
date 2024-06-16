@@ -15,10 +15,11 @@ public class ServerConfig
     public bool SendToGroup { get; set; } = false;
     public long QQID { get; set; }
     public int EACPort { get; set; } = 25250;
-    public ulong DiscordChannelId = 1248050001506992139;
-    public string DiscordToken = "MTI0ODg1ODIxOTg3OTczMTI1MQ.GIyaLR.auuVFG9p9RmI2SK5y8aHM8GKe9Adq02MP4WBc8";
+
     public int EACCount { get; set; } = 5;
     public string EACPath { get; set; } = "./EAC.txt";
+    public ulong DiscordChannelId { get; set; } = 1248050001506992139;
+    public string DiscordToken { get; set; } = "MTI0ODg1ODIxOTg3OTczMTI1MQ.GIyaLR.auuVFG9p9RmI2SK5y8aHM8GKe9Adq02MP4WBc8";
 
     public string ReadPath = string.Empty;
 
