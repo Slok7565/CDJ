@@ -1,10 +1,10 @@
 using System.Text.Json;
-using CDJ.CDJData;
-using CDJ.Config;
+using TONEX_CHAN.TONEX_CHANData;
+using TONEX_CHAN.Config;
 
-namespace CDJ.Services;
+namespace TONEX_CHAN.Services;
 
-public class OneBotService(ILogger<OneBotService> logger, HttpClient _Client) : ICDJService
+public class OneBotService(ILogger<OneBotService> logger, HttpClient _Client) : ITONEX_CHANService
 {
     private ServerConfig _config = null!;
     public readonly List<(long, bool)> _Reads = [];
@@ -65,7 +65,7 @@ public class OneBotService(ILogger<OneBotService> logger, HttpClient _Client) : 
         logger.LogInformation($"Send To User id:{id} message:{message}");
     }
 
-    public async ValueTask StartAsync(ServerConfig config, CDJService cdjService, CancellationToken cancellationToken)
+    public async ValueTask StartAsync(ServerConfig config, TONEX_CHANService cdjService, CancellationToken cancellationToken)
     {
         _config = config;
         try

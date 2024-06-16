@@ -1,8 +1,8 @@
-namespace CDJ.CDJData;
+namespace TONEX_CHAN.TONEX_CHANData;
 
 public record Room(
     string Code,
-    Version? Version,
+    string Version,
     int Count,
     LangName LangId,
     string ServerName,

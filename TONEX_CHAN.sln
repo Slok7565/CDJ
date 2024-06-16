@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CDJ", "CDJ.csproj", "{668FA527-72CD-4EDF-9CFB-B37BB95314BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TONEX_CHAN", "TONEX_CHAN.csproj", "{668FA527-72CD-4EDF-9CFB-B37BB95314BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCDJ", "TestCDJ\TestCDJ.csproj", "{D7808DDA-0C42-4470-9257-39C977554172}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTONEX_CHAN", "TestTONEX_CHAN\TestTONEX_CHAN.csproj", "{D7808DDA-0C42-4470-9257-39C977554172}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

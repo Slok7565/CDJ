@@ -1,24 +1,25 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using CDJ.Config;
+using TONEX_CHAN.Config;
 
-namespace CDJ.Services;
+namespace TONEX_CHAN.Services;
 
 public class SocketService(
     ILogger<SocketService> logger, 
     RoomsService roomsService, 
     OneBotService oneBotService,
-    EnvironmentalTextService environmentalTextService) : ICDJService
+    DiscordService discordService,
+    EnvironmentalTextService environmentalTextService) : ITONEX_CHANService
 {
     public TcpListener _TcpListener = null!;
     private ServerConfig _config = null!;
-    private CDJService _cdjService = null!;
+    private TONEX_CHANService _cdjService = null!;
     public IPAddress Address => IPAddress.Parse(_config.Ip);
     public Task? _Task;
     
 
-    public ValueTask StartAsync(ServerConfig config, CDJService cdjService, CancellationToken cancellationToken)
+    public ValueTask StartAsync(ServerConfig config, TONEX_CHANService cdjService, CancellationToken cancellationToken)
     {
         _config = config;
         _cdjService = cdjService;
@@ -52,7 +53,8 @@ public class SocketService(
                         logger.LogWarning($"{str} Pare Error");
                         continue;
                     }
-                    await oneBotService.SendMessage(environmentalTextService.Replace(_config.SendText));
+                    await oneBotService.SendMessage(environmentalTextService.Replace(_config.SendText_zh));
+                    await discordService.SendMessage(environmentalTextService.Replace(_config.SendText_en));
                 }
                 catch (Exception e)
                 {

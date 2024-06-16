@@ -1,4 +1,4 @@
-namespace CDJ.CDJData;
+namespace TONEX_CHAN.TONEX_CHANData;
 
 public class SendInfo(string message)
 {

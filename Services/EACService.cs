@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using CDJ.CDJData;
-using CDJ.Config;
+using TONEX_CHAN.TONEX_CHANData;
+using TONEX_CHAN.Config;
 
-namespace CDJ.Services;
+namespace TONEX_CHAN.Services;
 
-public class EACService(ILogger<EACService> logger, OneBotService oneBotService) : ICDJService
+public class EACService(ILogger<EACService> logger, OneBotService oneBotService, DiscordService discordService) : ITONEX_CHANService
 {
     private Stream _stream = null!;
     private StreamWriter _writer = null!;
@@ -33,9 +33,11 @@ public class EACService(ILogger<EACService> logger, OneBotService oneBotService)
         await _writer.WriteLineAsync($"Id:{data.ClientId}FriendCode:{data.FriendCode}Name:{data.Name}Reason:{data.Reason} : Count{data.Count}");
         await oneBotService.SendMessage(
             $"AddBan\nName:{data.Name}\nFriendCode:{data.FriendCode}Reason:{data.Reason}Count:{data.Count}");
+        await discordService.SendMessage(
+            $"AddBan\nName:{data.Name}\nFriendCode:{data.FriendCode}Reason:{data.Reason}Count:{data.Count}");
     }
 
-    public ValueTask StartAsync(ServerConfig config, CDJService cdjService, CancellationToken cancellationToken)
+    public ValueTask StartAsync(ServerConfig config, TONEX_CHANService cdjService, CancellationToken cancellationToken)
     {
         _Config = config;
         _stream = File.Open(_Config.EACPath, FileMode.OpenOrCreate, FileAccess.Write);

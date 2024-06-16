@@ -1,4 +1,4 @@
-namespace CDJ.Services;
+namespace TONEX_CHAN.Services;
 
 public class EnvironmentalTextService
 {

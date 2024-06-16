@@ -1,9 +1,10 @@
-﻿using CDJ.Config;
-using CDJ.Services;
+﻿using TONEX_CHAN.Config;
+using TONEX_CHAN.Services;
 using Serilog;
 using System.Text.RegularExpressions;
+using Discord.WebSocket;
 
-namespace CDJ;
+namespace TONEX_CHAN;
 
 public static class Program
 {
@@ -14,7 +15,7 @@ public static class Program
         var config = CreateConfig();
         SetLog(config);
         
-        Log.Logger.Information($"Start Run CDJ Version{version}");
+        Log.Logger.Information($"Start Run TONEX_CHAN Version{version}");
         try
         {
             Create(args, config).Build().Run();
@@ -56,22 +57,25 @@ public static class Program
             .ConfigureAppConfiguration(builder => builder.AddConfiguration(config))
             .ConfigureServices((context, collection) => 
             { 
-                collection.AddHostedService<CDJService>();
+                collection.AddHostedService<TONEX_CHANService>();
                 collection.AddSingleton<SocketService>(); 
                 collection.AddSingleton<OneBotService>();
-                
-                collection.AddSingleton<ICDJService>(n => n.GetRequiredService<SocketService>());
-                collection.AddSingleton<ICDJService>(n => n.GetRequiredService<OneBotService>());
+                collection.AddSingleton<DiscordService>();
+
+                collection.AddSingleton<ITONEX_CHANService>(n => n.GetRequiredService<SocketService>());
+                collection.AddSingleton<ITONEX_CHANService>(n => n.GetRequiredService<OneBotService>());
+                collection.AddSingleton<ITONEX_CHANService>(n => n.GetRequiredService<DiscordService>());
 
                 if (config.Get<ServerConfig>()!.EAC)
                 {
                     collection.AddSingleton<EACService>();
-                    collection.AddSingleton<ICDJService>(n => n.GetRequiredService<EACService>());
+                    collection.AddSingleton<ITONEX_CHANService>(n => n.GetRequiredService<EACService>());
                 }
                 
                 collection.AddSingleton<RoomsService>();
                 collection.AddSingleton<EnvironmentalTextService>();
                 collection.AddTransient<HttpClient>();
+                collection.AddTransient<DiscordSocketClient>();
                 collection.Configure<ServerConfig>(config);
             })
             .UseSerilog();

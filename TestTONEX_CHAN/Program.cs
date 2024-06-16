@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 
-Console.WriteLine("Test CDJ");
+Console.WriteLine("Test TONEX_CHAN");
 Create:
 var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 

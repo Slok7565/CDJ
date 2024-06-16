@@ -1,19 +1,19 @@
-using CDJ.Config;
+using TONEX_CHAN.Config;
 using Microsoft.Extensions.Options;
 
-namespace CDJ.Services;
+namespace TONEX_CHAN.Services;
 
-public class CDJService
+public class TONEX_CHANService
 (
     IServiceProvider _serviceProvider,
-    ILogger<CDJService> logger,
+    ILogger<TONEX_CHANService> logger,
     IOptions<ServerConfig> _options) : IHostedService
 {
     private readonly ServerConfig _config = _options.Value;
     public async Task StartAsync(CancellationToken cancellationToken)
     {
 
-        var services = _serviceProvider.GetServices<ICDJService>();
+        var services = _serviceProvider.GetServices<ITONEX_CHANService>();
         foreach (var service in services)
         {
             try
@@ -29,7 +29,7 @@ public class CDJService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        var services = _serviceProvider.GetServices<ICDJService>();
+        var services = _serviceProvider.GetServices<ITONEX_CHANService>();
         foreach (var service in services)
         {
             try
