@@ -22,6 +22,9 @@ public class ServerConfig
 
     public string ReadPath = string.Empty;
 
+
+    public string BanIpPath = string.Empty;
+
     // 分钟
     public int RoomInterval = 30;
 
