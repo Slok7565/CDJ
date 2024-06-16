@@ -8,7 +8,7 @@ namespace TONEX_CHAN;
 
 public static class Program
 {
-    public static readonly Version version = new(1, 0, 0);
+    public static readonly Version version = new(1, 0, 1);
     
     public static void Main(string[] args)
     {

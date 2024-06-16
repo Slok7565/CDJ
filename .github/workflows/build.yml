@@ -1,7 +1,11 @@
 name: AutoBuild .NET
 
-on: 
-  [push, pull_request]:
+on:
+  push:
+    paths:
+      - 'TONEX_CHAN/**'
+      - 'TestTONEX_CHAN/**'
+  pull_request:
     paths:
       - 'TONEX_CHAN/**'
       - 'TestTONEX_CHAN/**'
@@ -11,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
           submodules: true
 
@@ -24,7 +29,7 @@ jobs:
         run: dotnet build TONEX_CHAN/TONEX_CHAN.csproj --configuration Release --output ./TONEX_CHAN/Release
         
       - name: Del
-        run: rm -rf ./TONEX_CHAN/Release//TONEX_CHAN.pdb ./TONEX_CHAN/Release//TONEX_CHAN.deps.json ./TONEX_CHAN/Release//TONEX_CHAN.runtimeconfig.json ./TONEX_CHAN/Release//global.json
+        run: rm -rf ./TONEX_CHAN/Release/TONEX_CHAN.pdb ./TONEX_CHAN/Release/TONEX_CHAN.deps.json ./TONEX_CHAN/Release/TONEX_CHAN.runtimeconfig.json ./TONEX_CHAN/Release/global.json
 
       - name: Upload
         uses: actions/upload-artifact@v4.3.1
@@ -36,7 +41,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
           submodules: true
 
@@ -46,40 +52,40 @@ jobs:
           dotnet-version: 8.x
 
       - name: Build
-        run: dotnet build TONEX_CHAN/TONEX_CHAN.csproj --configuration Release --output ./TONEX_CHAN/Release
+        run: dotnet build TONEX_CHAN/TONEX_CHAN.csproj --configuration Release --output C:\TONEX_CHAN\Release
         
       - name: Del pdb
-        run: del ./TONEX_CHAN/Release/TONEX_CHAN.pdb
+        run: del C:\TONEX_CHAN\Release\TONEX_CHAN.pdb
       
       - name: Del deps
-        run: del ./TONEX_CHAN/Release/TONEX_CHAN.deps.json
+        run: del C:\TONEX_CHAN\Release\TONEX_CHAN.deps.json
         
       - name: Del runtimeconfig
-        run: del ./TONEX_CHAN/Release/TONEX_CHAN.runtimeconfig.json
+        run: del C:\TONEX_CHAN\Release\TONEX_CHAN.runtimeconfig.json
       
       - name: Del global
-        run: del ./TONEX_CHAN/Release/global.json
+        run: del C:\TONEX_CHAN\Release\global.json
         
       - name: Upload
         uses: actions/upload-artifact@v4.3.1
         with:
           name: TONEX_CHAN-Windows
-          path: ./TONEX_CHAN/Release/
+          path: C:\TONEX_CHAN\Release\
       
-      - name: BuildTestTONEX_CHAN
-        run: dotnet build TestTONEX_CHAN/TestTONEX_CHAN.csproj --configuration Release --output TestTONEX_CHAN/Release
+      - name: Build TestTONEX_CHAN
+        run: dotnet build TestTONEX_CHAN/TestTONEX_CHAN.csproj --configuration Release --output C:\TestTONEX_CHAN\Release
         
       - name: Del pdb
-        run: del ./TestTONEX_CHAN/Release/TONEX_CHAN.pdb
+        run: del C:\TestTONEX_CHAN\Release\TONEX_CHAN.pdb
 
       - name: Del deps
-        run: del ./TestTONEX_CHAN/Release/TONEX_CHAN.deps.json
+        run: del C:\TestTONEX_CHAN\Release\TONEX_CHAN.deps.json
 
       - name: Del runtimeconfig
-        run: del ./TestTONEX_CHAN/Release/TONEX_CHAN.runtimeconfig.json
+        run: del C:\TestTONEX_CHAN\Release\TONEX_CHAN.runtimeconfig.json
 
       - name: Upload TestTONEX_CHAN
         uses: actions/upload-artifact@v4.3.1
         with:
           name: TestTONEX_CHAN
-          path: ./TestTONEX_CHAN/Release
+          path: C:\TestTONEX_CHAN\Release\
