@@ -45,7 +45,7 @@ public class RoomsService(EnvironmentalTextService service, IOptions<ServerConfi
             string codePattern = @"^[a-zA-Z]{4}$|^[a-zA-Z]{6}$";
             if (!Regex.IsMatch(code, codePattern))
             {
-                Log.Logger.Warning("Invalid room code: must be 6 letters");
+                logger.LogWarning("Invalid room code: must be 6 letters");
                 return false;
             }
 
@@ -130,7 +130,7 @@ public class RoomsService(EnvironmentalTextService service, IOptions<ServerConfi
 
     static bool IsVersionValid(string version)
     {
-        string pattern = @"^\d+\.\d+_\d{8}(?:_(Debug|Canary|Dev|Preview))?(?:_\d+)?$";
+        string pattern = @"^\d+\.\d+_\d{8}$";
         Regex regex = new(pattern);
         return regex.IsMatch(version);
     }
