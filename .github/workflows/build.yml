@@ -76,13 +76,13 @@ jobs:
         run: dotnet build TestTONEX_CHAN/TestTONEX_CHAN.csproj --configuration Release --output C:\TestTONEX_CHAN\Release
         
       - name: Del pdb
-        run: del C:\TestTONEX_CHAN\Release\TONEX_CHAN.pdb
+        run: del C:\TestTONEX_CHAN\Release\TestTONEX_CHAN.pdb
 
       - name: Del deps
-        run: del C:\TestTONEX_CHAN\Release\TONEX_CHAN.deps.json
+        run: del C:\TestTONEX_CHAN\Release\TestTONEX_CHAN.deps.json
 
       - name: Del runtimeconfig
-        run: del C:\TestTONEX_CHAN\Release\TONEX_CHAN.runtimeconfig.json
+        run: del C:\TestTONEX_CHAN\Release\TestTONEX_CHAN.runtimeconfig.json
 
       - name: Upload TestTONEX_CHAN
         uses: actions/upload-artifact@v4.3.1
