@@ -10,7 +10,7 @@
   "EACPort": 25545,
   "EACCount": 5,
   "EACPath": "./Data/EAC.txt",
-  "DiscordChannelId" :"1248050001506992139;",
+  "DiscordChannelId" :"1248050001506992139",
   "DiscordToken" :"MTI0ODg1ODIxOTg3OTczMTI1MQ.GIyaLR.auuVFG9p9RmI2SK5y8aHM8GKe9Adq02MP4WBc8",
   "ReadPath": "",
   "RoomInterval": 30,
