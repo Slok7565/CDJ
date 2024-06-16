@@ -9,7 +9,12 @@
         <Authors>TianMengLuckey</Authors>
         <Version>1.0.0</Version>
         <Configuration>Release;Debug</Configuration>
+		<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     </PropertyGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="TONEX_CHAN.runtimeconfig.json" />
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Discord.Net" Version="3.15.0" />
