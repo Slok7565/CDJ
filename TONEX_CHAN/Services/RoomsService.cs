@@ -26,8 +26,8 @@ public class RoomsService(EnvironmentalTextService service, IOptions<ServerConfi
         
         return true;
     }
-    
-    public bool TryPareRoom(string text,[MaybeNullWhen(false)] out Room room)
+
+    public bool TryPareRoom_Zh(string text, [MaybeNullWhen(false)] out Room room)
     {
         room = null;
         try
@@ -99,22 +99,22 @@ public class RoomsService(EnvironmentalTextService service, IOptions<ServerConfi
                 logger.LogInformation("Successfully created and added room");
                 has = false;
             }
-            
+
             if (!CheckRoom(room))
             {
                 logger.LogInformation("CheckRoom:False");
                 return false;
             }
-            
+
             room.Time = DateTime.Now;
             if (!has)
                 _Rooms.Add(room);
-            
+
             service
                 .Update("RoomCode", code)
                 .Update("Version", version)
                 .Update("PlayerCount", count.ToString())
-                .Update("Language", (config.Value.LangTextToCN ? lang_forZh[langId] : lang_forEn[langId])!)
+                .Update("Language", lang_forZh[langId]!)
                 .Update("ServerName", serverName)
                 .Update("PlayerName", playName);
         }
@@ -123,10 +123,109 @@ public class RoomsService(EnvironmentalTextService service, IOptions<ServerConfi
             logger.LogWarning(e.ToString());
             return false;
         }
-        
+
         return true;
     }
-    
+    public bool TryPareRoom_En(string text, [MaybeNullWhen(false)] out Room room)
+    {
+        room = null;
+        try
+        {
+            var strings = text.Split('|');
+            logger.LogInformation("Checking the length of the input string array");
+            if (strings.Length < 6)
+            {
+                logger.LogWarning("Input string does not contain enough parts");
+                return false;
+            }
+
+            logger.LogInformation("Extracting room code");
+            var code = strings[0];
+            string codePattern = @"^[a-zA-Z]{4}$|^[a-zA-Z]{6}$";
+            if (!Regex.IsMatch(code, codePattern))
+            {
+                logger.LogWarning("Invalid room code: must be 6 letters");
+                return false;
+            }
+
+            room = _Rooms.FirstOrDefault(n => n.Code == code);
+            logger.LogInformation("Extracting room version");
+            var version = strings[1];
+
+            logger.LogInformation("Validating room version");
+            bool isValidVersion = IsVersionValid(version);
+            if (!isValidVersion)
+            {
+                logger.LogWarning("Invalid version format");
+                return false;
+            }
+
+            logger.LogInformation("Extracting player count");
+            string input = strings[2];
+
+            logger.LogInformation("Validating player count");
+            string pattern = @"^\d+$";
+            if (!Regex.IsMatch(input, pattern))
+            {
+                logger.LogWarning("Player count is not a valid number");
+                return false;
+            }
+
+            if (!int.TryParse(input, out var count))
+            {
+                logger.LogWarning("Failed to parse player count as integer");
+                return false;
+            }
+
+            logger.LogInformation("Player count parsed successfully: {Count}", count);
+
+            logger.LogInformation("Extracting room language");
+            if (!Enum.TryParse<LangName>(strings[3], out var langId))
+            {
+                logger.LogWarning("Invalid language ID");
+                return false;
+            }
+
+            logger.LogInformation("Extracting server name");
+            var serverName = strings[4];
+
+            logger.LogInformation("Extracting host player name");
+            var playName = strings[5];
+            var has = true;
+            if (room == null)
+            {
+                room = new Room(code, version, count, langId, serverName, playName);
+                logger.LogInformation("Successfully created and added room");
+                has = false;
+            }
+
+            if (!CheckRoom(room))
+            {
+                logger.LogInformation("CheckRoom:False");
+                return false;
+            }
+
+            room.Time = DateTime.Now;
+            if (!has)
+                _Rooms.Add(room);
+
+            service
+                .Update("RoomCode", code)
+                .Update("Version", version)
+                .Update("PlayerCount", count.ToString())
+                .Update("Language", lang_forEn[langId]!)
+                .Update("ServerName", serverName)
+                .Update("PlayerName", playName);
+        }
+        catch (Exception e)
+        {
+            logger.LogWarning(e.ToString());
+            return false;
+        }
+
+        return true;
+    }
+
 
     static bool IsVersionValid(string version)
     {

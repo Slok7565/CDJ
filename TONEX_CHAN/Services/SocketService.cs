@@ -57,13 +57,19 @@ public class SocketService(
                         continue;
                     }
 
-                    var com = roomsService.TryPareRoom(str, out var room);
+                    var com = roomsService.TryPareRoom_Zh(str, out var room);
                     if (!com)
                     {
                         logger.LogWarning($"{str} Pare Error");
                         continue;
                     }
                     await oneBotService.SendMessage(environmentalTextService.Replace(_config.SendText_zh));
+                    var com_en = roomsService.TryPareRoom_En(str, out var room_en);
+                    if (!com_en)
+                    {
+                        logger.LogWarning($"{str} Pare Error");
+                        continue;
+                    }
                     await discordService.SendMessage(environmentalTextService.Replace(_config.SendText_en));
                 }
                 catch (Exception e)
