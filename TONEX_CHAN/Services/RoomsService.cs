@@ -130,7 +130,7 @@ public class RoomsService(EnvironmentalTextService service, IOptions<ServerConfi
 
     static bool IsVersionValid(string version)
     {
-        string pattern = @"^\d+\.\d+_\d{8}_(Debug|Canary|Dev|Preview)(?:_\d+)?$";
+        string pattern = @"^\d+\.\d+_\d{8}(?:_(Debug|Canary|Dev|Preview))?(?:_\d+)?$";
         Regex regex = new(pattern);
         return regex.IsMatch(version);
     }
